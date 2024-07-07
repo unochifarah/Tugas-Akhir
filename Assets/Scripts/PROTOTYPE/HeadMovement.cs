@@ -11,6 +11,8 @@ public class HeadMovement : MonoBehaviour
 
     private CanvasGroup blinkOverlay;
 
+    private bool eyesClosed = false;
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -52,5 +54,13 @@ public class HeadMovement : MonoBehaviour
         // Smoothly handle blinking
         float targetAlpha = Input.GetKey(KeyCode.Space) ? 1f : 0f;
         blinkOverlay.alpha = Mathf.Lerp(blinkOverlay.alpha, targetAlpha, Time.deltaTime * 5f);
+
+        // Update eyesClosed status
+        eyesClosed = Input.GetKey(KeyCode.Space);
+    }
+
+    public bool AreEyesClosed()
+    {
+        return eyesClosed;
     }
 }

@@ -3,8 +3,8 @@ using System.Collections;
 
 public class GhostManager : MonoBehaviour
 {
-    public GameObject[] ghostPrefabs; // Array of ghost prefabs
-    public Transform[] spawnPoints; // Array of spawn points
+    public GameObject[] ghostPrefabs;
+    public Transform[] spawnPoints;
     public float minSpawnTime = 5f; // Minimum time between spawns
     public float maxSpawnTime = 10f; // Maximum time between spawns
 
