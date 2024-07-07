@@ -9,6 +9,7 @@ public class SanityManager : MonoBehaviour
     public float sanityRecoveryRate = 0.5f; // Recovery rate when eyes are closed
 
     public AudioSource heartbeatAudioSource; // Assign this in the Inspector
+    public AudioSource breathingAudioSource; // Assign this in the Inspector
     public Image vignetteImage; // Assign this in the Inspector
 
     public float normalHeartbeatPitch = 0.5f; // Normal pitch when sanity is above 75
@@ -20,6 +21,11 @@ public class SanityManager : MonoBehaviour
     public float increasedHeartbeatVolume = 0.7f; // Slightly increased volume when sanity is 50 or lower
     public float highHeartbeatVolume = 0.9f; // Further increased volume when sanity is 25 or lower
     public float maxHeartbeatVolume = 1.0f; // Maximum volume when sanity is 0
+
+    public float normalBreathingVolume = 0.2f; // Normal volume for breathing when sanity is above 75
+    public float maxBreathingVolume = 1.0f; // Maximum volume for breathing when sanity is 0
+    public float normalBreathingPitch = 1.0f; // Normal pitch for breathing when sanity is above 75
+    public float maxBreathingPitch = 2.0f; // Maximum pitch for breathing when sanity is 0
 
     private bool eyesClosed = false;
 
@@ -39,6 +45,18 @@ public class SanityManager : MonoBehaviour
         else
         {
             Debug.LogError("Heartbeat AudioSource is not assigned!");
+        }
+
+        if (breathingAudioSource != null)
+        {
+            breathingAudioSource.loop = true; // Loop the breathing sound
+            breathingAudioSource.volume = normalBreathingVolume; // Start with a lower volume
+            breathingAudioSource.pitch = normalBreathingPitch; // Start with normal pitch
+            breathingAudioSource.Play(); // Start playing the breathing sound
+        }
+        else
+        {
+            Debug.LogError("Breathing AudioSource is not assigned!");
         }
 
         // Ensure the vignette is initially invisible
@@ -108,6 +126,32 @@ public class SanityManager : MonoBehaviour
             Debug.Log($"Heartbeat volume: {heartbeatAudioSource.volume}, pitch: {heartbeatAudioSource.pitch}");
         }
 
+        if (breathingAudioSource != null)
+        {
+            if (currentSanity > 75)
+            {
+                breathingAudioSource.volume = normalBreathingVolume;
+                breathingAudioSource.pitch = normalBreathingPitch;
+            }
+            else if (currentSanity <= 75 && currentSanity > 50)
+            {
+                breathingAudioSource.volume = Mathf.Lerp(normalBreathingVolume, maxBreathingVolume, 1 - sanityPercent);
+                breathingAudioSource.pitch = Mathf.Lerp(normalBreathingPitch, maxBreathingPitch, 1 - sanityPercent);
+            }
+            else if (currentSanity <= 50 && currentSanity > 25)
+            {
+                breathingAudioSource.volume = Mathf.Lerp(normalBreathingVolume, maxBreathingVolume, 1 - sanityPercent);
+                breathingAudioSource.pitch = Mathf.Lerp(normalBreathingPitch, maxBreathingPitch, 1 - sanityPercent);
+            }
+            else if (currentSanity <= 25)
+            {
+                breathingAudioSource.volume = Mathf.Lerp(normalBreathingVolume, maxBreathingVolume, 1 - sanityPercent);
+                breathingAudioSource.pitch = Mathf.Lerp(normalBreathingPitch, maxBreathingPitch, 1 - sanityPercent);
+            }
+
+            Debug.Log($"Breathing volume: {breathingAudioSource.volume}, pitch: {breathingAudioSource.pitch}");
+        }
+
         if (vignetteImage != null)
         {
             if (currentSanity > 75)
@@ -134,10 +178,14 @@ public class SanityManager : MonoBehaviour
         Debug.Log("Game Over!");
         // Implement game over logic here, e.g., load game over screen
         vignetteImage.color = new Color(0f, 0f, 0f, 1f); // Make the screen completely black
-        // Optionally, you can also stop the heartbeat sound
+        // Optionally, you can also stop the heartbeat and breathing sound
         if (heartbeatAudioSource != null)
         {
             heartbeatAudioSource.Stop();
+        }
+        if (breathingAudioSource != null)
+        {
+            breathingAudioSource.Stop();
         }
     }
 
